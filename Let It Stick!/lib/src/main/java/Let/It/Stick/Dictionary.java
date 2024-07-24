@@ -7,11 +7,13 @@ import java.net.http.HttpResponse;
 import java.io.IOException;
 import java.io.StringReader;
 
-import javax.json.stream;
+import javax.json.Json;
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParser.Event;
 
 public class Dictionary {
 	
-	public static String getDefinition(String word) {
+	public static void getDefinition(String word) {
 		
 		JsonParser parser = Json.createParser(new StringReader(call(word)));
 		
