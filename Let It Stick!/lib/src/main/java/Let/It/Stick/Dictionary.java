@@ -22,7 +22,7 @@ public class Dictionary {
 	}
 	
 	public static String call(String word) {
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.dictionaryapi.dev/api/v2/entries/en/rip")).method("GET", HttpRequest.BodyPublishers.noBody()).build();
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.dictionaryapi.dev/api/v2/entries/en/" + word)).method("GET", HttpRequest.BodyPublishers.noBody()).build();
 		
 		HttpResponse<String> response = null;
 		try {
@@ -37,7 +37,7 @@ public class Dictionary {
 	}
 	
 	public static void main(String args[]) {
-		call("fall");
+		System.out.println(call("drive"));
 	}
 
 }
