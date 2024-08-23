@@ -31,8 +31,7 @@ public class Dictionary {
 		return response.body().toString();
 	}
 	
-	// This method gives me an error; it says the provider org.glassfish.json.JsonProviderImpl isn't found...
-	// I fixed it by adding the dependency to "build.gradle"
+
 	public static ArrayList<String> getDefinition(String word, String partOfSpeech) {
 		
 		String response = call(word);
