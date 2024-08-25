@@ -31,11 +31,10 @@ public class Dictionary {
 		return response.body().toString();
 	}
 	
-
-	public static ArrayList<String> getDefinition(String word, String partOfSpeech) {
+	public static ArrayList<String> getData(String word, int position) {
 		
 		String response = call(word);
-		ArrayList<String> def = new ArrayList<String>();
+		ArrayList<String> definition = new ArrayList<String>();
 		
 		JsonParser parser = Json.createParser(new StringReader(response));
 		
@@ -47,30 +46,29 @@ public class Dictionary {
 				event = parser.next();
 				if (event == Event.KEY_NAME && parser.getString().equals("partOfSpeech")) {
 					event = parser.next();
-					event = parser.next();
-					event = parser.next();
-					event = parser.next();
-					event = parser.next();
-					event = parser.next();
-					def.add(parser.getString());
+					definition.add(parser.getString());
+					for (int u = 0; u < position; u++) {
+						event = parser.next();	
+					}
+					if (event == Event.VALUE_STRING)
+					definition.add(parser.getString());
+					else
+						definition.add("It seems as if " + word + " doesn't have that attribute!");
+				}
 			}
-		}
 			else {
 				break;
 			}
-		
-		
 		}
-	return def;
+		return definition;
 	}
 	public static void main(String args[]) {
-		ArrayList<String> min = getDefinition("peer", "noun");
+		ArrayList<String> data = getData("hello", 5);
 		
-		for (int i = 0; i < min.size(); i++) {
-			System.out.println(min.get(i));
+		for (int i = 0; i < data.size(); i++) {
+			System.out.println(data.get(i));
 		}
 		
-		//System.out.println(call("peer").length());
 	}
 		
 
