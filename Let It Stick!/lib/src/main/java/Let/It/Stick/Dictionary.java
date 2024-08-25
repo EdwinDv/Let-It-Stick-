@@ -41,23 +41,30 @@ public class Dictionary {
 		
 		Event event = parser.next(); 
 		
-		
-		// I wasn't looping through the whole response before
 		// It seems like call(word).length isn't giving me the actual length. I have to loop to a reasonable number
-		for (int i = 0; i < 4000; i++) {
+		for (int i = 0; i < 5000; i++) {
 			if (parser.hasNext()) {
-			event = parser.next();
-			if (event == Event.VALUE_STRING) {	
+				event = parser.next();
+				if (event == Event.KEY_NAME && parser.getString().equals("partOfSpeech")) {
+					event = parser.next();
+					event = parser.next();
+					event = parser.next();
+					event = parser.next();
+					event = parser.next();
+					event = parser.next();
 					def.add(parser.getString());
-					}
 			}
 		}
+			else {
+				break;
+			}
 		
-		return def;
+		
 		}
-	
+	return def;
+	}
 	public static void main(String args[]) {
-		ArrayList<String> min = getDefinition("peer", "");
+		ArrayList<String> min = getDefinition("peer", "noun");
 		
 		for (int i = 0; i < min.size(); i++) {
 			System.out.println(min.get(i));
