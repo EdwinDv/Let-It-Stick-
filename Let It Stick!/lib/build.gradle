@@ -32,6 +32,10 @@ dependencies {
     implementation 'javax.json:javax.json-api:1.0'
     
 	implementation 'org.glassfish:javax.json:1.1.4'
+	
+	// https://mvnrepository.com/artifact/com.owlike/genson
+	implementation 'com.owlike:genson:1.6'
+	
     
    
 }

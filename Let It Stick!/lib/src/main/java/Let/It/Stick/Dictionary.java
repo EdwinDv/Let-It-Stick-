@@ -12,16 +12,23 @@ import javax.json.Json;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
+import com.owlike.genson.Genson;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Dictionary {
 	
-	private String data;
+	private String words;
 	private JsonParser parser;
+	private Genson genson;
+	private Map<String, String> data;
 	
 	public Dictionary(String word) {
-		data = call(word);
-		parser = Json.createParser(new StringReader(data));
+		words = call(word);
+		parser = Json.createParser(new StringReader(words));
+		genson = new Genson();
+		data = genson.deserialize(new StringReader(words), Map.class);
 	}
 	
 	public String call(String word) {
