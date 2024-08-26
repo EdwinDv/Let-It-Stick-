@@ -16,7 +16,15 @@ import java.util.ArrayList;
 
 public class Dictionary {
 	
-	public static String call(String word) {
+	private String data;
+	private JsonParser parser;
+	
+	public Dictionary(String word) {
+		data = call(word);
+		parser = Json.createParser(new StringReader(data));
+	}
+	
+	public String call(String word) {
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.dictionaryapi.dev/api/v2/entries/en/" + word)).method("GET", HttpRequest.BodyPublishers.noBody()).build();
 		
 		HttpResponse<String> response = null;
@@ -30,13 +38,16 @@ public class Dictionary {
 		
 		return response.body().toString();
 	}
+	/**
+	 * 
+	 * @param word
+	 * @param position of the various properties of a word. ...
+	 * @return
+	 */
 	
-	public static ArrayList<String> getData(String word, int position) {
-		
-		String response = call(word);
+	public ArrayList<String> getData(String word, int position) {
+
 		ArrayList<String> definition = new ArrayList<String>();
-		
-		JsonParser parser = Json.createParser(new StringReader(response));
 		
 		Event event = parser.next(); 
 		
@@ -62,14 +73,8 @@ public class Dictionary {
 		}
 		return definition;
 	}
-	public static void main(String args[]) {
-		ArrayList<String> data = getData("hello", 5);
-		
-		for (int i = 0; i < data.size(); i++) {
-			System.out.println(data.get(i));
-		}
-		
-	}
+	
+	// I need a more efficient parsing method
 		
 
 }
