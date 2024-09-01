@@ -9,26 +9,40 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
-import com.owlike.genson.Genson;
-
 import java.util.ArrayList;
-import java.util.Map;
+
 
 public class Dictionary {
 	
 	private String words;
 	private JsonParser parser;
-	private Genson genson;
-	private Map<String, String> data;
+	private ArrayList<String> data;
+	private JsonReader jsonReader;
 	
 	public Dictionary(String word) {
 		words = call(word);
-		parser = Json.createParser(new StringReader(words));
-		genson = new Genson();
-		data = genson.deserialize(new StringReader(words), Map.class);
+		//parser = Json.createParser(new StringReader(words));
+		jsonReader = Json.createReader(new StringReader(words));
+		
+	}
+	
+	public JsonArray details() {
+		JsonArray ray = jsonReader.readArray();
+		
+		JsonObject object = ray.getJsonObject(0);
+		
+		JsonArray r = object.getJsonArray("meanings");
+		
+		return r;
+		
+		//return object.getJsonArray(0);
+		
 	}
 	
 	public String call(String word) {
@@ -45,13 +59,7 @@ public class Dictionary {
 		
 		return response.body().toString();
 	}
-	/**
-	 * 
-	 * @param word
-	 * @param position of the various properties of a word. ...
-	 * @return
-	 */
-	
+
 	public ArrayList<String> getData(String word, int position) {
 
 		ArrayList<String> definition = new ArrayList<String>();
@@ -78,10 +86,13 @@ public class Dictionary {
 				break;
 			}
 		}
+		parser.close();
 		return definition;
 	}
 	
-	// I need a more efficient parsing method
-		
+	
+	
+	
+	 
 
 }
