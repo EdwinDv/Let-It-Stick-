@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -12,40 +13,19 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParser.Event;
-
-import java.util.ArrayList;
-
+import javax.json.stream.JsonParsingException;
 
 public class Dictionary {
 	
-	private String words;
-	private JsonParser parser;
-	private ArrayList<String> data;
+	private String data;
 	private JsonReader jsonReader;
 	
-	public Dictionary(String word) {
-		words = call(word);
-		//parser = Json.createParser(new StringReader(words));
-		jsonReader = Json.createReader(new StringReader(words));
-		
+	public Dictionary(String word){
+		data = call(word);
+		jsonReader = Json.createReader(new StringReader(data));
 	}
 	
-	public JsonArray details() {
-		JsonArray ray = jsonReader.readArray();
-		
-		JsonObject object = ray.getJsonObject(0);
-		
-		JsonArray r = object.getJsonArray("meanings");
-		
-		return r;
-		
-		//return object.getJsonArray(0);
-		
-	}
-	
-	public String call(String word) {
+	public String call(String word){
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.dictionaryapi.dev/api/v2/entries/en/" + word)).method("GET", HttpRequest.BodyPublishers.noBody()).build();
 		
 		HttpResponse<String> response = null;
@@ -59,40 +39,100 @@ public class Dictionary {
 		
 		return response.body().toString();
 	}
-
-	public ArrayList<String> getData(String word, int position) {
-
-		ArrayList<String> definition = new ArrayList<String>();
+	
+	public JsonObject getDefinition(int definition, String partOfSpeech) throws JsonParsingException{
+		JsonArray array = null;
+		JsonObject mainObject = null;
 		
-		Event event = parser.next(); 
+		try {
+			array = jsonReader.readArray();
+		}
 		
-		// It seems like call(word).length isn't giving me the actual length. I have to loop to a reasonable number
-		for (int i = 0; i < 5000; i++) {
-			if (parser.hasNext()) {
-				event = parser.next();
-				if (event == Event.KEY_NAME && parser.getString().equals("partOfSpeech")) {
-					event = parser.next();
-					definition.add(parser.getString());
-					for (int u = 0; u < position; u++) {
-						event = parser.next();	
-					}
-					if (event == Event.VALUE_STRING)
-					definition.add(parser.getString());
-					else
-						definition.add("It seems as if " + word + " doesn't have that attribute!");
-				}
-			}
-			else {
-				break;
+		catch (JsonParsingException e) {
+			System.out.println("This word either doesn't exist, or isn't in the database!");
+			jsonReader.close();
+			System.exit(0);
+		}
+		
+		JsonObject object = array.getJsonObject(definition);
+		JsonArray secondArray = object.getJsonArray("meanings");
+		
+		for (int i = 0; i < secondArray.size(); i++) {
+			if (secondArray.getJsonObject(i).getString("partOfSpeech").equalsIgnoreCase(partOfSpeech)) {
+				mainObject = secondArray.getJsonObject(i);
 			}
 		}
-		parser.close();
-		return definition;
+		
+		if (mainObject == null) {
+			System.out.println("This part of speech doesn't exist for this word!");
+			System.exit(0);
+		}
+		
+		return mainObject;
+				
 	}
 	
+	public JsonArray getSynonyms(int definition, int type, String partOfSpeech) throws JsonParsingException{
+		JsonArray array = null;
+		JsonObject mainObject = null;
+		
+		try {
+			array = jsonReader.readArray();
+		}
+		
+		catch (JsonParsingException e) {
+			System.out.println("This word either doesn't exist, or isn't in the database!");
+			jsonReader.close();
+			System.exit(0);
+		}
+		
+		JsonObject object = array.getJsonObject(definition);
+		JsonArray secondArray = object.getJsonArray("meanings");
+		
+		for (int i = 0; i < secondArray.size(); i++) {
+			if (secondArray.getJsonObject(i).getString("partOfSpeech").equalsIgnoreCase(partOfSpeech)) {
+				mainObject = secondArray.getJsonObject(i);
+			}
+		}
+		
+		if (mainObject == null) {
+			System.out.println("The part of speech of this word doesn't have a synonym/antonym");
+			System.exit(0);
+		}
+		
+		JsonArray data = null;
+		if (type == 0)
+			data = mainObject.getJsonArray("synonyms");
+		else
+			data = mainObject.getJsonArray("antonyms");
+
+		return data;
+				
+	}
 	
-	
-	
-	 
+	public ArrayList<String> getPartsOfSpeech(int definiton) {
+		ArrayList<String> parts = new ArrayList<String>();
+		
+		JsonArray array = null;
+		
+		try {
+			array = jsonReader.readArray();
+		}
+		
+		catch (JsonParsingException e) {
+			System.out.println("This word either doesn't exist, or isn't in the database!");
+			System.exit(0);
+		}
+		
+		JsonObject object = array.getJsonObject(definiton);
+		JsonArray secondArray = object.getJsonArray("meanings");
+
+		for (int i = 0; i < secondArray.size(); i++) {
+			parts.add(secondArray.getJsonObject(i).getString("partOfSpeech"));
+		}
+		
+		return parts;
+	}
+ 
 
 }
