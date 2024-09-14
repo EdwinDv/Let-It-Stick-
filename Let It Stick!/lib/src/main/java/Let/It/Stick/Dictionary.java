@@ -19,10 +19,22 @@ public class Dictionary {
 	
 	private String data;
 	private JsonReader jsonReader;
+	private JsonArray array = null;
+	private JsonObject mainObject = null;
 	
 	public Dictionary(String word){
 		data = call(word);
 		jsonReader = Json.createReader(new StringReader(data));
+		
+		try {
+			array = jsonReader.readArray();
+		}
+		
+		catch (JsonParsingException e) {
+			System.out.println("This word either doesn't exist, or isn't in the database!");
+			jsonReader.close();
+			System.exit(0);
+		}
 	}
 	
 	public String call(String word){
@@ -40,19 +52,9 @@ public class Dictionary {
 		return response.body().toString();
 	}
 	
-	public JsonObject getDefinition(int definition, String partOfSpeech) throws JsonParsingException{
-		JsonArray array = null;
-		JsonObject mainObject = null;
+	public ArrayList<String> getDefinition(int definition, String partOfSpeech){
 		
-		try {
-			array = jsonReader.readArray();
-		}
-		
-		catch (JsonParsingException e) {
-			System.out.println("This word either doesn't exist, or isn't in the database!");
-			jsonReader.close();
-			System.exit(0);
-		}
+		ArrayList<String> definitions = new ArrayList<String>();
 		
 		JsonObject object = array.getJsonObject(definition);
 		JsonArray secondArray = object.getJsonArray("meanings");
@@ -68,23 +70,19 @@ public class Dictionary {
 			System.exit(0);
 		}
 		
-		return mainObject;
+		JsonArray defArray = mainObject.getJsonArray("definitions");
+		
+	    for (int g = 0; g < defArray.size(); g++) {
+			definitions.add(defArray.getJsonObject(g).getString("definition"));
+		}
+	    
+		return definitions;
 				
 	}
 	
-	public JsonArray getSynonyms(int definition, int type, String partOfSpeech) throws JsonParsingException{
-		JsonArray array = null;
-		JsonObject mainObject = null;
+	public ArrayList<String> getSynonyms(int definition, int type, String partOfSpeech){
 		
-		try {
-			array = jsonReader.readArray();
-		}
-		
-		catch (JsonParsingException e) {
-			System.out.println("This word either doesn't exist, or isn't in the database!");
-			jsonReader.close();
-			System.exit(0);
-		}
+		ArrayList<String> synonyms = new ArrayList<String>();
 		
 		JsonObject object = array.getJsonObject(definition);
 		JsonArray secondArray = object.getJsonArray("meanings");
@@ -106,23 +104,16 @@ public class Dictionary {
 		else
 			data = mainObject.getJsonArray("antonyms");
 
-		return data;
+		for (int i = 0; i < data.size(); i++) {
+			synonyms.add(data.getString(i));
+		}
+		
+		return synonyms;
 				
 	}
 	
 	public ArrayList<String> getPartsOfSpeech(int definiton) {
 		ArrayList<String> parts = new ArrayList<String>();
-		
-		JsonArray array = null;
-		
-		try {
-			array = jsonReader.readArray();
-		}
-		
-		catch (JsonParsingException e) {
-			System.out.println("This word either doesn't exist, or isn't in the database!");
-			System.exit(0);
-		}
 		
 		JsonObject object = array.getJsonObject(definiton);
 		JsonArray secondArray = object.getJsonArray("meanings");
