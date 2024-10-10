@@ -1,9 +1,6 @@
 package Let.It.Stick;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,53 +8,78 @@ import javax.swing.*;
 
 import java.util.ArrayList;
 
-public class DictionaryWindow extends JFrame{
+public class DictionaryWindow{
 	
 	private static final long serialVersionUID = 1L;
 	
-	private JButton search;
-	private ArrayList<JButton> listOfWords = new ArrayList<JButton>();
-	//Dictionary dictionary;
+	private JScrollPane buttonWords;
+	private JPanel words;
 	
-	public DictionaryWindow() {
+	private ArrayList<JButton> listOfWords = new ArrayList<JButton>();
 		
-		search = new JButton("Search word");
-		search.setBounds(1366 / 2, 768 / 2, 200, 100);
-		search.addActionListener(new ActionListener() {
-			public void  actionPerformed(ActionEvent e) {	
+	public DictionaryWindow() {
+		JFrame frame = new JFrame("Let It Stick!");
+        
+        JPanel content = new JPanel();
+        content.setLayout(new BorderLayout());
+        
+        JLayeredPane wordWindow = new JLayeredPane();
+        
+        words = new JPanel();
+        words.setLayout(new BoxLayout(words, BoxLayout.Y_AXIS));
+        
+        JButton topButton = new JButton("Your added words will appear here!");
+        words.add(topButton);
+        
+        JButton search = new JButton("Search for a word");
+        search.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {	
 				String word = JOptionPane.showInputDialog(null , "Word searcher", "Enter a word.");
 				JButton button = new JButton(word);
 				button.setBounds(0, 50 + (listOfWords.size() * 100), 200, 100);
 				listOfWords.add(button);
 				
-				
-				//Dictionary dict = new Dictionary(word);
-
-				//label.setText(dict.getDefinition(0, "adjective").get(0));
-				DictionaryWindow.this.add(button);
+				words.add(button);
+				buttonWords.revalidate();
+				buttonWords.repaint();
+				button.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						System.out.println("hi");
+					}
+				});
 			}
-		});
-		
-		JLabel label = new JLabel("Words");
-		label.setBounds(75, 10, 100, 50);
-		
-		JTextArea textArea = new JTextArea(5, 30);
-		
-		JScrollPane scroll = new JScrollPane(textArea);
-		scroll.setPreferredSize(new Dimension(450, 110));
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLayout(null);
-		this.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height);
-		this.add(search);
-		this.add(label);
-		this.add(scroll);
-		this.setVisible(true);
-		
-		
+        });
+        
+        
+        buttonWords = new JScrollPane(words);
+        
+        JButton leftButton = new JButton("<");
+        leftButton.setBounds(topButton.WIDTH, 384, 50, 100);
+        wordWindow.add(leftButton, Integer.valueOf(2));
+        
+        JButton rightButton = new JButton(">");
+        rightButton.setBounds(topButton.WIDTH + 920, 384, 50, 100);
+        wordWindow.add(rightButton, Integer.valueOf(2));
+        
+        JButton mainWord = new JButton("fe");
+        mainWord.setBounds(topButton.WIDTH, 0, topButton.WIDTH + 970, 768);
+        wordWindow.add(mainWord, Integer.valueOf(1));
+
+        content.add(search, BorderLayout.EAST);
+        content.add(buttonWords, BorderLayout.WEST);
+        content.add(wordWindow, BorderLayout.CENTER);
+        
+        frame.setContentPane(content);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1366, 768);
+        frame.setVisible(true);
+        
+		//label.setText(dict.getDefinition(0, "adjective").get(0));
+				
 	}
 	
 	public static void main(String[] args) {
-		new DictionaryWindow();
+		//new DictionaryWindow();
 		/*String word = "sad";
 		Dictionary dict = new Dictionary(word);
 			
@@ -65,9 +87,14 @@ public class DictionaryWindow extends JFrame{
 		System.out.println(dict.getDefinition(0,"adjective"));
 		//System.out.println(dict.getSynonyms(0, 0, "adjective"));
 		*/
+		
+		new DictionaryWindow();
+		
 	}
 	
-	
-	
-	
 }
+	
+	
+	
+	
+
