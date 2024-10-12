@@ -55,8 +55,12 @@ public class Dictionary {
 	public ArrayList<String> getDefinition(int definition, String partOfSpeech){
 		
 		ArrayList<String> definitions = new ArrayList<String>();
-		
-		JsonObject object = array.getJsonObject(definition);
+		JsonObject object = null;
+		if (array.size() > 4) {
+			object = array.getJsonObject(definition);
+		}
+		else
+			object = array.getJsonObject(0);
 		JsonArray secondArray = object.getJsonArray("meanings");
 		
 		for (int i = 0; i < secondArray.size(); i++) {
@@ -108,8 +112,7 @@ public class Dictionary {
 			synonyms.add(data.getString(i));
 		}
 		
-		return synonyms;
-				
+		return synonyms;			
 	}
 	
 	public ArrayList<String> getPartsOfSpeech(int definiton) {
@@ -125,5 +128,4 @@ public class Dictionary {
 		return parts;
 	}
  
-
 }
