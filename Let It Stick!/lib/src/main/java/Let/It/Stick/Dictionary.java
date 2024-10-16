@@ -31,9 +31,7 @@ public class Dictionary {
 		}
 		
 		catch (JsonParsingException e) {
-			System.out.println("This word either doesn't exist, or isn't in the database!");
 			jsonReader.close();
-			System.exit(0);
 		}
 	}
 	

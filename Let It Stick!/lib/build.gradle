@@ -27,9 +27,7 @@ dependencies {
     implementation 'com.google.guava:guava:30.1.1-jre'
     
 	implementation 'org.json:json:20240303'
-    
     implementation 'javax.json:javax.json-api:1.0'
-    
 	implementation 'org.glassfish:javax.json:1.1.4'
 		
     
