@@ -1,7 +1,6 @@
 package Let.It.Stick;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -22,6 +21,7 @@ import java.util.stream.Collectors;
 
 public class DictionaryWindow{
 	
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 	
 	private JScrollPane scrollPane;
@@ -37,6 +37,7 @@ public class DictionaryWindow{
 	
 	private BufferedWriter writer;
 		
+	@SuppressWarnings("static-access")
 	public DictionaryWindow() {
 		String home = System.getProperty("user.home");
 		String fileName = "words.txt";
@@ -199,10 +200,7 @@ public class DictionaryWindow{
         recommendedWord.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		JButton firstWord = listOfWords.get(0);
-        		JButton secondWord = listOfWords.get(1);
-        		
-        		//secondWord.doClick();
-        		
+        		        		
         		listOfWords.remove(0);
         		listOfWords.add(firstWord);
         		
